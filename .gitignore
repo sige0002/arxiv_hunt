@@ -9,6 +9,8 @@ build/
 data/csv/*.csv
 data/excel/*.xlsx
 data/pdf/*.pdf
+data/*.db
 .mypy_cache/
 .pytest_cache/
 .coverage
+/openspec/changes

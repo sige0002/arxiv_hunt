@@ -92,9 +92,13 @@ uv run python run_ui.py
 ブラウザで `http://localhost:8501` にアクセスすると以下の機能が使えます:
 
 - 検索フォーム (カテゴリ選択、日付範囲指定、著者フィルタ)
-- 検索結果の表示・CSV/Excel ダウンロード
-- 検索履歴の閲覧・再実行
-- CSV → Excel 変換
+  - 検索成功時、結果は `data/arxiv_hunt.db` にも upsert され、検索履歴が記録されます。
+  - `Search query` と `Author` の両方が空の送信は拒否されます (Categories のみの送信は arXiv 側で結果ゼロになるため UI で弾きます)。
+- 検索結果の表示・ダウンロード: CSV / Excel / BibTeX (`.bib`) / RIS (`.ris`) / 全件 PDF (`.zip`)。BibTeX・RIS はメモリ生成、PDF ZIP は `data/pdf/` を共有キャッシュとして使い既存ファイルは再ダウンロードしません。
+- 各結果カードの `Tags (comma-separated)` 入力で、ローカル DB のタグを編集できます。
+- `Library` ページ: ローカル DB ベースの全文検索 (FTS5)、タグでの絞り込み、DB 履歴の閲覧・Load。
+- `History` ページ: CSV アーカイブベースの直近 5 件 (`Library` とは別の入口)。
+- CSV → Excel 変換。
 
 ### Make コマンド
 
@@ -115,9 +119,10 @@ make clean                            # data/csv, data/excel を削除
 
 ```
 data/
-├── csv/    # 検索結果 CSV
-├── excel/  # 変換後の Excel
-└── pdf/    # ダウンロードした PDF
+├── csv/             # 検索結果 CSV (latest + 直近 5 アーカイブ)
+├── excel/           # 変換後の Excel
+├── pdf/             # ダウンロードした PDF (Web UI 一括 DL の共有キャッシュ)
+└── arxiv_hunt.db    # SQLite (papers / searches / tags / FTS5)
 ```
 
 ## テスト
@@ -144,6 +149,11 @@ arxiv_hunt/
 │   └── watcher.py       #   定期検索 & Slack 通知
 ├── scripts/             # CLI エントリポイント
 ├── ui/                  # Streamlit Web UI
+│   ├── app.py           #   ページルーティング
+│   ├── session.py       #   セッション内 PaperDatabase
+│   ├── components/      #   sidebar / search_form / results_table / history / library
+│   └── utils/pdf_zip.py #   結果リストの PDF を ZIP にまとめるヘルパ
+├── openspec/            # 仕様書と change proposal (OpenSpec)
 ├── tests/               # テストスイート
 ├── data/                # 出力ファイル (Git 管理外)
 ├── pyproject.toml

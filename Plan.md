@@ -63,9 +63,14 @@ uv run scripts/download_pdfs.py --input data/csv/results.csv
 python run_ui.py
 ```
 
-1. サイドバーから「論文検索」を選択
-2. 検索クエリを入力
-3. 「検索を実行」ボタンをクリック
+サイドバーに `Search` / `History` / `Library` / `Excel Convert` の 4 ページ。
+
+1. `Search` で query / author / categories を指定して検索 (query または author の少なくとも一方が必須 — Categories 単独は弾かれます)。
+2. 結果リストから CSV / Excel / BibTeX / RIS / PDF ZIP がダウンロードできます。各カードの `Tags` 入力でローカル DB のタグ編集も可能。
+3. `Library` ページで FTS5 全文検索・タグ AND 絞り込み・DB ベースの検索履歴 (`Load`) を利用できます。
+4. `History` ページは従来通り CSV アーカイブの直近 5 件 (`Library` とは別)。
+
+なお `scheduled-watch` (定期検索 + Slack POST) は本変更の対象外です。
 
 ## 📁 プロジェクト構造
 

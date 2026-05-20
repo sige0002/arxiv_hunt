@@ -8,9 +8,13 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 # Output directories
-CSV_OUTPUT_DIR = PROJECT_ROOT / "data" / "csv"
-EXCEL_OUTPUT_DIR = PROJECT_ROOT / "data" / "excel"
-PDF_OUTPUT_DIR = PROJECT_ROOT / "data" / "pdf"
+DATA_DIR = PROJECT_ROOT / "data"
+CSV_OUTPUT_DIR = DATA_DIR / "csv"
+EXCEL_OUTPUT_DIR = DATA_DIR / "excel"
+PDF_OUTPUT_DIR = DATA_DIR / "pdf"
+
+# Database
+DATABASE_PATH = DATA_DIR / "arxiv_hunt.db"
 
 # arXiv API settings
 ARXIV_RATE_LIMIT_SECONDS = 3.0

@@ -15,6 +15,7 @@ from arxiv_hunt.config import (
     SHELL_META_CHARS,
 )
 from arxiv_hunt.csv_io import cleanup_old_archives, save_papers_to_csv
+from ui.session import get_db
 
 
 def _validate_input(query: str, author: str, categories: list[str]) -> str | None:
@@ -25,10 +26,12 @@ def _validate_input(query: str, author: str, categories: list[str]) -> str | Non
     """
     has_query = bool(query and query.strip())
     has_author = bool(author and author.strip())
-    has_categories = bool(categories)
 
-    if not has_query and not has_author and not has_categories:
-        return "At least one search condition (query, author, or category) is required."
+    if not has_query and not has_author:
+        return (
+            "Please provide a query or author — categories alone produce zero "
+            "results on arXiv."
+        )
     for label, value in [("Query", query), ("Author", author)]:
         if not value:
             continue
@@ -171,6 +174,21 @@ def render_search_form() -> None:
         except Exception as exc:
             st.error(f"Failed to save CSV: {exc}")
             return
+
+        # Persist to local DB (upsert + record search history).
+        search_params = {
+            "query": query.strip(),
+            "author": author.strip(),
+            "author_operator": author_operator,
+            "categories": categories,
+            "start_date": str(start_date),
+            "end_date": str(end_date),
+            "max_results": int(max_results),
+        }
+        try:
+            get_db().save_search(search_label, search_params, papers)
+        except Exception as exc:
+            st.warning(f"Search succeeded but failed to record in DB: {exc}")
 
         # Store in session state
         st.session_state["papers"] = papers

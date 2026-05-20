@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import streamlit as st
 
-PAGES = ["Search", "History", "Excel Convert"]
+PAGES = ["Search", "History", "Library", "Excel Convert"]
 
 
 def render_sidebar() -> str:

@@ -11,6 +11,8 @@ from ui.components.sidebar import render_sidebar
 from ui.components.search_form import render_search_form
 from ui.components.results_table import render_results_table
 from ui.components.history import render_history
+from ui.components.library import render_library_page
+from ui.session import get_db
 from arxiv_hunt.excel_converter import convert_csv_to_excel
 
 # ---------------------------------------------------------------------------
@@ -20,6 +22,9 @@ st.set_page_config(
     page_title="arxiv_hunt",
     layout="wide",
 )
+
+# Initialize the per-session PaperDatabase eagerly so all pages share it.
+get_db()
 
 # ---------------------------------------------------------------------------
 # Sidebar navigation
@@ -37,6 +42,9 @@ if selected_page == "Search":
 
 elif selected_page == "History":
     render_history()
+
+elif selected_page == "Library":
+    render_library_page(get_db())
 
 elif selected_page == "Excel Convert":
     st.header("Convert CSV to Excel")
